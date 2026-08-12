@@ -1,24 +1,26 @@
-
 import express from 'express';
 import cors from "cors";
 import { PORT } from './config/config.js';
 import { sequelize } from "./db/conexion.js";
 
-import { FrutasModel } from './models/FrutasModel.js';
+import clienteRouter from './router/ClienteRouter.js';
 
 const _PORT = PORT || 3000;
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-//app.use('/api', rotuerTypeUsers);
+app.use('/api', clienteRouter);
 
+app.use((req, res) => {
+    res.status(404).json({ message: 'not found' });
+});
 
 const main = async () => {
     try {
         await sequelize.authenticate();
         console.log('Base de datos conectada.');
-        await sequelize.sync({ alter: false })
+        await sequelize.sync({ alter: false });
         app.listen(_PORT, () => {
             console.log(`Servidor corriendo en el puerto => ${_PORT}`);
         });
@@ -27,4 +29,3 @@ const main = async () => {
     }
 }
 main();
-
